@@ -1,21 +1,24 @@
+import os
+from datetime import datetime
+
 from flask import Flask, render_template, request, redirect, url_for, flash
 from flask_sqlalchemy import SQLAlchemy
+
 from data_models import db, Author, Book
-from datetime import datetime
-import os
+
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'your-secret-key-here'
-
 
 basedir = os.path.abspath(os.path.dirname(__file__))
 app.config['SQLALCHEMY_DATABASE_URI'] = f"sqlite:///{os.path.join(basedir, 'data/library.sqlite')}"
 
 db.init_app(app)
 
-# Root-Route hinzugefügt
+
 @app.route('/')
 def home():
+    """Display the home page with books and search functionality."""
     # Suchparameter und Sortierparameter aus URL holen
     search_query = request.args.get('search', '').strip()
     sort_by = request.args.get('sort', 'title')
@@ -46,15 +49,18 @@ def home():
                            books_with_authors=books_with_authors,
                            current_sort=sort_by,
                            search_query=search_query)
+
+
 @app.route('/add_author', methods=['GET', 'POST'])
 def add_author():
+    """Add a new author to the database."""
     if request.method == 'POST':
         # Daten aus dem Formular holen
         name = request.form.get('name')
         birthdate = request.form.get('birthdate')
         date_of_death = request.form.get('date_of_death') or None
 
-        #Validierung
+        # Validierung
         if not name or not birthdate:
             flash('Name and birthdate are required!', 'error')
             return render_template('add_author.html')
@@ -81,16 +87,18 @@ def add_author():
             flash('Author added successfully.', 'success')
             return redirect(url_for('add_author'))
 
-        except Exception as fehler:
+        except Exception as error:  # Korrigiert: 'fehler' → 'error'
             db.session.rollback()
-            flash(f'Error adding author: {str(fehler)}', 'error')
+            flash(f'Error adding author: {str(error)}', 'error')
             return render_template('add_author.html')
 
     # GET Request - Formular anzeigen
     return render_template('add_author.html')
 
+
 @app.route('/add_book', methods=['GET', 'POST'])
 def add_book():
+    """Add a new book to the database."""
     if request.method == 'POST':
         # Daten aus dem Formular holen
         isbn = request.form.get('isbn')
@@ -98,7 +106,7 @@ def add_book():
         publication_year = request.form.get('publication_year')
         author_id = request.form.get('author_id')
 
-        # Valisierung
+        # Validierung
         if not isbn or not title or not publication_year or not author_id:
             flash('All fields are required!', 'error')
             authors = Author.query.all()
@@ -109,7 +117,7 @@ def add_book():
             new_book = Book(
                 isbn=isbn,
                 title=title,
-                publication_year=publication_year,
+                publication_year=int(publication_year),  # Korrigiert: Typumwandlung
                 author_id=int(author_id)
             )
 
@@ -120,9 +128,9 @@ def add_book():
             flash('Book added successfully.', 'success')
             return redirect(url_for('add_book'))
 
-        except Exception as fehler:
+        except Exception as error:  # Korrigiert: 'fehler' → 'error'
             db.session.rollback()
-            flash(f'Error adding book: {str(fehler)}', 'error')
+            flash(f'Error adding book: {str(error)}', 'error')
             authors = Author.query.all()
             return render_template('add_book.html', authors=authors)
 
@@ -130,8 +138,10 @@ def add_book():
     authors = Author.query.all()
     return render_template('add_book.html', authors=authors)
 
+
 @app.route('/book/<int:book_id>/delete', methods=['POST'])
 def delete_book(book_id):
+    """Delete a book and potentially its author if no other books exist."""
     try:
         # Buch finden
         book = Book.query.get_or_404(book_id)
@@ -165,15 +175,18 @@ def delete_book(book_id):
 
     return redirect(url_for('home'))
 
-# Hilfsfunktion für das Cover-Bild
+
 def get_book_cover_url(isbn):
-    """Gibt eine Open Library Cover-URL zurück"""
+    """Return an Open Library cover URL."""
     return f"https://covers.openlibrary.org/b/isbn/{isbn}-M.jpg"
+
 
 # Funktion global verfügbar machen
 @app.context_processor
 def utility_processor():
+    """Make functions available in templates."""
     return dict(get_book_cover_url=get_book_cover_url)
+
 
 if __name__ == '__main__':
     with app.app_context():

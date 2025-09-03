@@ -1,10 +1,11 @@
 from flask_sqlalchemy import SQLAlchemy
-from datetime import datetime
 
 db = SQLAlchemy()
 
 
 class Author(db.Model):
+    """Author model representing a book author."""
+
     __tablename__ = 'authors'
 
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
@@ -12,7 +13,7 @@ class Author(db.Model):
     birth_date = db.Column(db.Date, nullable=False)
     date_of_death = db.Column(db.Date, nullable=True)
 
-    # Beziehung zu Büchern
+    # Relationship to books
     books = db.relationship('Book', backref='author', lazy=True, cascade='all, delete-orphan')
 
     def __repr__(self):
@@ -23,6 +24,8 @@ class Author(db.Model):
 
 
 class Book(db.Model):
+    """Book model representing a book."""
+
     __tablename__ = 'books'
 
     id = db.Column(db.Integer, primary_key=True)

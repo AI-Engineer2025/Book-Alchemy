@@ -220,7 +220,7 @@
         <a href="/add_book">Add Book</a>
     </div>
 
-    <!-- Suchformular -->
+    <!-- Search Form -->
     <div class="search-form">
         <form method="GET">
             <input type="text"
@@ -269,11 +269,11 @@
         <div class="book-grid">
             {% for book, author in books_with_authors %}
                 <div class="book-card">
-                    <!-- Buch-Cover mit ISBN -->
+                    <!-- Book Cover with ISBN -->
                     <img src="{{ get_book_cover_url(book.isbn) }}"
                          alt="{{ book.title }} Cover"
                          class="book-cover"
-                         onerror="this.onerror=null; this.parentElement.innerHTML='<div class=\'no-image\'>No Cover</div>';">
+                         onerror="this.onerror=null; this.parentElement.innerHTML='<div class=\'no-image\'>No Cover</div>';">>
 
                     <div class="book-title">{{ book.title }}</div>
                     <div class="book-author">by {{ author.name }}</div>
@@ -284,7 +284,7 @@
                     <form method="POST"
                           action="{{ url_for('delete_book', book_id=book.id) }}"
                           class="delete-form"
-                          onsubmit="return confirm('Are you sure you want to delete the book \"{{ book.title }}\" by {{ author.name }}?');">
+                          onsubmit="return confirm('Are you sure you want to delete the book &quot;{{ book.title }}&quot; by {{ author.name }}?');">
                         <button type="submit" class="delete-button">Delete Book</button>
                     </form>
                 </div>
