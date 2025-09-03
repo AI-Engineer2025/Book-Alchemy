@@ -1,0 +1,300 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Library Home</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            background-color: #f5f5f5;
+        }
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        .search-form {
+            text-align: center;
+            margin-bottom: 20px;
+            padding: 20px;
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .search-input {
+            padding: 10px;
+            width: 300px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 16px;
+        }
+        .search-button {
+            padding: 10px 20px;
+            background-color: #28a745;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+            margin-left: 10px;
+        }
+        .search-button:hover {
+            background-color: #218838;
+        }
+        .search-info {
+            margin-top: 10px;
+            color: #666;
+        }
+        .clear-search {
+            margin-left: 10px;
+            color: #007bff;
+            text-decoration: none;
+        }
+        .clear-search:hover {
+            text-decoration: underline;
+        }
+        .sort-options {
+            text-align: center;
+            margin-bottom: 20px;
+            padding: 15px;
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .sort-options a {
+            margin: 0 10px;
+            padding: 8px 15px;
+            text-decoration: none;
+            border-radius: 5px;
+            transition: background-color 0.3s;
+        }
+        .sort-options a.active {
+            background-color: #007bff;
+            color: white;
+        }
+        .sort-options a:not(.active) {
+            background-color: #e9ecef;
+            color: #495057;
+        }
+        .sort-options a:not(.active):hover {
+            background-color: #dee2e6;
+        }
+        .book-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 20px;
+        }
+        .book-card {
+            background: white;
+            border-radius: 8px;
+            padding: 20px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            text-align: center;
+            position: relative;
+        }
+        .book-cover {
+            width: 150px;
+            height: 200px;
+            object-fit: cover;
+            border: 1px solid #ddd;
+            margin: 0 auto 15px;
+        }
+        .book-title {
+            font-size: 1.2em;
+            font-weight: bold;
+            margin-bottom: 5px;
+            color: #333;
+        }
+        .book-author {
+            color: #666;
+            margin-bottom: 10px;
+            font-style: italic;
+        }
+        .book-year {
+            color: #888;
+            font-size: 0.9em;
+        }
+        .book-isbn {
+            color: #888;
+            font-size: 0.8em;
+            margin-top: 5px;
+        }
+        .no-image {
+            width: 150px;
+            height: 200px;
+            background-color: #eee;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 15px;
+            color: #999;
+            border: 1px solid #ddd;
+        }
+        .nav-links {
+            text-align: center;
+            margin: 20px 0;
+        }
+        .nav-links a {
+            margin: 0 10px;
+            padding: 10px 15px;
+            background-color: #007bff;
+            color: white;
+            text-decoration: none;
+            border-radius: 5px;
+        }
+        .nav-links a:hover {
+            background-color: #0056b3;
+        }
+        .book-count {
+            text-align: center;
+            color: #666;
+            margin-bottom: 15px;
+            font-style: italic;
+        }
+        .no-results {
+            text-align: center;
+            padding: 50px;
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            margin: 20px 0;
+        }
+        /* Delete Button Styles */
+        .delete-form {
+            margin-top: 15px;
+        }
+        .delete-button {
+            background-color: #dc3545;
+            color: white;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+        }
+        .delete-button:hover {
+            background-color: #c82333;
+        }
+        .flash-messages {
+            max-width: 800px;
+            margin: 0 auto 20px;
+        }
+        .success {
+            background-color: #d4edda;
+            color: #155724;
+            padding: 12px;
+            border-radius: 5px;
+            border: 1px solid #c3e6cb;
+            margin-bottom: 10px;
+        }
+        .error {
+            background-color: #f8d7da;
+            color: #721c24;
+            padding: 12px;
+            border-radius: 5px;
+            border: 1px solid #f5c6cb;
+            margin-bottom: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>📚 My Library</h1>
+        <p>Welcome to your personal book collection</p>
+    </div>
+
+    <!-- Flash Messages -->
+    <div class="flash-messages">
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                    <div class="{{ category }}">{{ message }}</div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+    </div>
+
+    <div class="nav-links">
+        <a href="/add_author">Add Author</a>
+        <a href="/add_book">Add Book</a>
+    </div>
+
+    <!-- Suchformular -->
+    <div class="search-form">
+        <form method="GET">
+            <input type="text"
+                   name="search"
+                   class="search-input"
+                   placeholder="Search books by title, author, or ISBN..."
+                   value="{{ search_query }}">
+            <button type="submit" class="search-button">Search</button>
+            {% if search_query %}
+                <a href="{{ url_for('home') }}" class="clear-search">Clear Search</a>
+            {% endif %}
+        </form>
+        {% if search_query %}
+            <div class="search-info">
+                Search results for: <strong>"{{ search_query }}"</strong>
+            </div>
+        {% endif %}
+    </div>
+
+    {% if search_query and books_with_authors|length == 0 %}
+        <div class="no-results">
+            <h2>No books found</h2>
+            <p>No books match your search for "{{ search_query }}".</p>
+            <p><a href="{{ url_for('home') }}">Show all books</a></p>
+        </div>
+    {% elif books_with_authors %}
+        <div class="book-count">
+            Showing {{ books_with_authors|length }} book(s)
+            {% if search_query %} matching "{{ search_query }}" {% endif %}
+        </div>
+
+        {% if not search_query %}
+        <div class="sort-options">
+            <strong>Sort by:</strong>
+            <a href="{{ url_for('home', sort='title', search=search_query) }}"
+               class="{{ 'active' if current_sort == 'title' else '' }}">
+                Title
+            </a>
+            <a href="{{ url_for('home', sort='author', search=search_query) }}"
+               class="{{ 'active' if current_sort == 'author' else '' }}">
+                Author
+            </a>
+        </div>
+        {% endif %}
+
+        <div class="book-grid">
+            {% for book, author in books_with_authors %}
+                <div class="book-card">
+                    <!-- Buch-Cover mit ISBN -->
+                    <img src="{{ get_book_cover_url(book.isbn) }}"
+                         alt="{{ book.title }} Cover"
+                         class="book-cover"
+                         onerror="this.onerror=null; this.parentElement.innerHTML='<div class=\'no-image\'>No Cover</div>';">
+
+                    <div class="book-title">{{ book.title }}</div>
+                    <div class="book-author">by {{ author.name }}</div>
+                    <div class="book-year">Published: {{ book.publication_year }}</div>
+                    <div class="book-isbn">ISBN: {{ book.isbn }}</div>
+
+                    <!-- Delete Form -->
+                    <form method="POST"
+                          action="{{ url_for('delete_book', book_id=book.id) }}"
+                          class="delete-form"
+                          onsubmit="return confirm('Are you sure you want to delete the book \"{{ book.title }}\" by {{ author.name }}?');">
+                        <button type="submit" class="delete-button">Delete Book</button>
+                    </form>
+                </div>
+            {% endfor %}
+        </div>
+    {% else %}
+        <div style="text-align: center; margin: 50px;">
+            <h2>No books in the library yet</h2>
+            <p><a href="/add_book">Add your first book</a></p>
+        </div>
+    {% endif %}
+</body>
+</html>

@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Add Book</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 40px; }
+        .form-group { margin-bottom: 15px; }
+        label { display: inline-block; width: 150px; font-weight: bold; }
+        input[type="text"], input[type="number"], select { padding: 5px; width: 200px; }
+        input[type="submit"] { background-color: #4CAF50; color: white; padding: 10px 20px; border: none; cursor: pointer; }
+        input[type="submit"]:hover { background-color: #45a049; }
+        .flash-messages { margin-bottom: 20px; }
+        .success { color: green; }
+        .error { color: red; }
+    </style>
+</head>
+<body>
+    <h1>Add New Book</h1>
+
+    <!-- Flash Messages -->
+    <div class="flash-messages">
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                    <div class="{{ category }}">{{ message }}</div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+    </div>
+
+    <!-- Book Form -->
+    <form method="POST">
+        <div class="form-group">
+            <label for="isbn">ISBN:</label>
+            <input type="text" id="isbn" name="isbn" required>
+        </div>
+
+        <div class="form-group">
+            <label for="title">Title:</label>
+            <input type="text" id="title" name="title" required>
+        </div>
+
+        <div class="form-group">
+            <label for="publication_year">Publication Year:</label>
+            <input type="number" id="publication_year" name="publication_year" min="1000" max="2024" required>
+        </div>
+
+        <div class="form-group">
+            <label for="author_id">Author:</label>
+            <select id="author_id" name="author_id" required>
+                <option value="">Select an author</option>
+                {% for author in authors %}
+                    <option value="{{ author.id }}">{{ author.name }}</option>
+                {% endfor %}
+            </select>
+        </div>
+
+        <div class="form-group">
+            <input type="submit" value="Add Book">
+        </div>
+    </form>
+
+    <p><a href="/">Back to Home</a> | <a href="/add_author">Add Author</a></p>
+</body>
+</html>
