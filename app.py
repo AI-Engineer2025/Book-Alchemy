@@ -154,7 +154,6 @@ def delete_book(book_id):
 
         # Prüfen ob der Autor noch andere Bücher hat
         remaining_books = Book.query.filter_by(author_id=author_id).count()
-        author_name = "Unknown"
 
         if remaining_books == 0:
             # Autor hat keine weiteren Bücher -> Autor löschen
